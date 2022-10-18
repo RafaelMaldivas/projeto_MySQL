@@ -1,0 +1,107 @@
+/* Lógico_1: */
+
+CREATE TABLE DIARISTA (
+    nome VARCHAR,
+    cpf_diarista VARCHAR,
+    telefone VARCHAR,
+    num_reg NUMERIC PRIMARY KEY,
+    nascimento DATE,
+    endereco VARCHAR,
+    nota INTEGER
+);
+
+CREATE TABLE CLIENTE (
+    cpf_cliente VARCHAR PRIMARY KEY,
+    nome VARCHAR,
+    telefone VARCHAR,
+    nota INTEGER,
+    FK_RESIDENCIA_id_recidencia NUMERIC
+);
+
+CREATE TABLE RESIDENCIA (
+    logradouro VARCHAR,
+    cep VARCHAR,
+    bairro VARCHAR,
+    cidade VARCHAR,
+    complemento VARCHAR,
+    id_recidencia NUMERIC PRIMARY KEY,
+    tamanho_total INTEGER
+);
+
+CREATE TABLE SERVICO (
+    ordem_serv NUMERIC PRIMARY KEY,
+    tempo INTEGER,
+    data_inicial DATE,
+    data_final DATE,
+    valor_serv DECIMAL,
+    transporte DECIMAL,
+    taxa DECIMAL
+);
+
+CREATE TABLE _AVALIA (
+    num_reg NUMERIC,
+    cpf_cliente VARCHAR,
+    nota INTEGER,
+    descricao VARCHAR,
+    FK_CLIENTE_cpf_cliente VARCHAR,
+    FK_DIARISTA_num_reg NUMERIC,
+    PRIMARY KEY (num_reg, cpf_cliente)
+);
+
+CREATE TABLE _AGENDA_CLIENTE_SERVICO_DIARISTA (
+    FK_CLIENTE_cpf_cliente VARCHAR,
+    FK_SERVICO_ordem_serv NUMERIC,
+    FK_DIARISTA_num_reg NUMERIC
+);
+
+CREATE TABLE PASSAR_ROUPA (
+    id_passar_roupa NUMERIC,
+    quantidade NUMERIC,
+    descricao VARCHAR,
+    FK_SERVICO_ordem_serv NUMERIC,
+    PRIMARY KEY (id_passar_roupa, FK_SERVICO_ordem_serv)
+);
+
+CREATE TABLE LIMPEZA (
+    id_limpeza NUMERIC,
+    num_comodo INTEGER,
+    num_banheiro INTEGER,
+    num_quarto INTEGER,
+    FK_SERVICO_ordem_serv NUMERIC,
+    PRIMARY KEY (id_limpeza, FK_SERVICO_ordem_serv)
+);
+ 
+ALTER TABLE CLIENTE ADD CONSTRAINT FK_CLIENTE_2
+    FOREIGN KEY (FK_RESIDENCIA_id_recidencia)
+    REFERENCES RESIDENCIA (id_recidencia)
+    ON DELETE RESTRICT;
+ 
+ALTER TABLE _AVALIA ADD CONSTRAINT FK__AVALIA_2
+    FOREIGN KEY (FK_CLIENTE_cpf_cliente)
+    REFERENCES CLIENTE (cpf_cliente);
+ 
+ALTER TABLE _AVALIA ADD CONSTRAINT FK__AVALIA_3
+    FOREIGN KEY (FK_DIARISTA_num_reg)
+    REFERENCES DIARISTA (num_reg);
+ 
+ALTER TABLE _AGENDA_CLIENTE_SERVICO_DIARISTA ADD CONSTRAINT FK__AGENDA_CLIENTE_SERVICO_DIARISTA_1
+    FOREIGN KEY (FK_CLIENTE_cpf_cliente)
+    REFERENCES CLIENTE (cpf_cliente);
+ 
+ALTER TABLE _AGENDA_CLIENTE_SERVICO_DIARISTA ADD CONSTRAINT FK__AGENDA_CLIENTE_SERVICO_DIARISTA_2
+    FOREIGN KEY (FK_SERVICO_ordem_serv)
+    REFERENCES SERVICO (ordem_serv);
+ 
+ALTER TABLE _AGENDA_CLIENTE_SERVICO_DIARISTA ADD CONSTRAINT FK__AGENDA_CLIENTE_SERVICO_DIARISTA_3
+    FOREIGN KEY (FK_DIARISTA_num_reg)
+    REFERENCES DIARISTA (num_reg);
+ 
+ALTER TABLE PASSAR_ROUPA ADD CONSTRAINT FK_PASSAR_ROUPA_2
+    FOREIGN KEY (FK_SERVICO_ordem_serv)
+    REFERENCES SERVICO (ordem_serv)
+    ON DELETE CASCADE;
+ 
+ALTER TABLE LIMPEZA ADD CONSTRAINT FK_LIMPEZA_2
+    FOREIGN KEY (FK_SERVICO_ordem_serv)
+    REFERENCES SERVICO (ordem_serv)
+    ON DELETE CASCADE;
